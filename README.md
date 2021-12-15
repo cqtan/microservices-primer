@@ -50,6 +50,8 @@ In this case, Service D has its own Database, which gets populated through the E
 
 ## Event Bus
 
+![event bus](./screenshots/event_bus.png)
+
 - An event-driven pattern for broadcasting and managing events asynchronously
 - Especially useful for the MS architecture for the advantages mentioned aboved
 - In summary, an event bus (also broker) receives emitted events and passes the data along to subscribers anytime an event is emitted
