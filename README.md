@@ -56,4 +56,8 @@ In this case, Service D has its own Database, which gets populated through the E
 - Especially useful for the MS architecture for the advantages mentioned aboved
 - In summary, an event bus (also broker) receives emitted events and passes the data along to subscribers anytime an event is emitted
 
+## Query Service
+
+- This service really simply joins data and creates data related to presentatino
+
 # References
