@@ -56,6 +56,10 @@ In this case, Service D has its own Database, which gets populated through the E
 - Especially useful for the MS architecture for the advantages mentioned aboved
 - In summary, an event bus (also broker) receives emitted events and passes the data along to subscribers anytime an event is emitted
 
+# Blog example
+
+The following goes through a rough overview of the patterns used in tried and tested solutions by implementing them by hand.
+
 ## Query Service
 
 - This service really simply joins data and creates data related to presentation
@@ -85,6 +89,7 @@ A common issue is when a service is interrupted or a new service is introduced. 
 - For every event the Event bus stores event in its DB
 - Interrupted or newly introduced services then needs to fetch data from this DB to be in sync with other services
   - Another solution was to allow this new service access to the DBs of the other services, however, other services may have differing DB solutions, which the new service needs to know about and cater for
+- Example can be executed, by shutting down the Query service and creating posts. Turn on the Query service again. This should let the Query service sync with the Event bus data on startup, making the client receive all the posts it missed
 
 # References
 
