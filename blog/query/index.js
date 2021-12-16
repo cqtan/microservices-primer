@@ -35,7 +35,7 @@ app.post("/events", async (req, res) => {
     const comment = post.comments.find((c) => c.id === id);
 
     comment.status = status;
-    comment.content = `${content} (${status})`;
+    comment.content = content;
   }
 
   console.log(posts);
