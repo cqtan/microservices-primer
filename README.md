@@ -94,3 +94,19 @@ A common issue is when a service is interrupted or a new service is introduced. 
 # References
 
 - Feature Creep: When an implementation for a specific domain needs to accomodate the business logic of another domain it becomes more complex than it needs to be
+
+---
+
+---
+
+# Docker & Kubernetes
+
+- Docker as our Containerization solution to contain each of our MS in an environment that includes everything it needs for it to run
+- Docker configs to include information / commands in order to run each service correctly
+- Kubternetes to easily manage mutliple containers in terms of: auto scaling, container communication, commands
+
+![kuberenets](screenshots/kubernetes.png)
+
+Once installed locally, Docker is then able to use methods (Namespacing and Control Groups) to partition sections of the computer dedicated for each container it is meant to create. Since these methods are only native to Linux systems, Docker runs Linux virtual machine in the background to perform these methods by communicating to the Linux kernel. You can see the Linux version by running `docker version`.
+
+![docker resources](screenshots/docker_resources.png)
