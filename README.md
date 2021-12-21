@@ -156,4 +156,4 @@ posts   1/1     Running   0          82s
 
 # Tips
 
-- Add this `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`
+- Add this line `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`
