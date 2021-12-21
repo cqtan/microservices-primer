@@ -110,3 +110,50 @@ A common issue is when a service is interrupted or a new service is introduced. 
 Once installed locally, Docker is then able to use methods (Namespacing and Control Groups) to partition sections of the computer dedicated for each container it is meant to create. Since these methods are only native to Linux systems, Docker runs Linux virtual machine in the background to perform these methods by communicating to the Linux kernel. You can see the Linux version by running `docker version`.
 
 ![docker resources](screenshots/docker_resources.png)
+
+## Terminology
+
+Since some of the terms used in the context of Kubernetes is identical to terms used in other areas, the following should help elaborate these `Objects `:
+
+`Kubernetes Cluster`: A collection of nodes + a master to manage them
+
+`Node`: A virtual machine that will run our containers
+
+`Pod`: More or less a running container. Technically a pod can run multiple containers
+
+`Deployment`: Monitors a set of pods, making sure they are running and restarting them if they crash
+
+`Service`: Provides an easy-to-remember URL to access a running container. It is with this, the Event Bus will communicate with in order to access the isolated Micro Services.
+
+# Commands
+
+## Docker
+
+- `docker build -t cqtan/posts:0.0.1 .` Builds a image from a `Dockerfile` with a tag and version. The tag makes it easier to target instead of the default sha256 encoding. Leaving out the `:0.0.1` version will default to `:latest`, which will let K8 look for it on DockerHub instead of local
+- `docker run -it <tag-name>`: Runs the image with given tag name. The `it` flag lets you use a nicely formatted terminal within the running container
+- `docker ps`: Print out information about all running containers
+- `docker logs` Print out logs from given container
+- `docker exec -it <tag-name> <command>`: Execute a command in current Container
+
+```sh
+ => => writing image sha256:366e148f73ab3f2f519ab63fc76a08b6beb712871736c36da9c  0.0s
+ => => naming to docker.io/cqtan/posts:0.0.1                                     0.0s
+```
+
+## Kubernetes
+
+- `kubectl apply -f posts.yaml`: Run a Pod with given file called `posts.yaml`
+- `kubectl get pods`: Print out all running Pods
+- `kubectl exec -it <pod-name> <command>`: Execute a command in current Pod
+- `kubectl delete pod <pod-name>`: Deletes a pod. Typically, to manually restart a Pod
+- `kubectl describe pod <pod-name>`: Print out infos about the running Pod. Typically, to check the Event section for errors
+
+```sh
+❯ kubectl get pods
+NAME    READY   STATUS    RESTARTS   AGE
+posts   1/1     Running   0          82s
+```
+
+# Tips
+
+- Add this `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`

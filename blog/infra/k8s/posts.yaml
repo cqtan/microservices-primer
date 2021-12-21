@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Pod # Type of Object we want to create
+metadata:
+  name: posts
+spec:
+  containers:
+    - name: posts # Does not need to be identical to metadata/name
+      image: cqtan/posts:0.0.1
