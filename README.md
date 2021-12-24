@@ -144,9 +144,12 @@ Since some of the terms used in the context of Kubernetes is identical to terms 
 
 - `kubectl apply -f posts.yaml`: Run a Pod with given file called `posts.yaml`
 - `kubectl get pods`: Print out all running Pods
+- `kubectl get deployments`: Print out all running Deployments
 - `kubectl exec -it <pod-name> <command>`: Execute a command in current Pod
 - `kubectl delete pod <pod-name>`: Deletes a pod. Typically, to manually restart a Pod
 - `kubectl describe pod <pod-name>`: Print out infos about the running Pod. Typically, to check the Event section for errors
+- replace `pods` with `deployments` for Deployment commands
+- `kubectl rollout restart deployments <depl-name>`
 
 ```sh
 ❯ kubectl get pods
@@ -157,3 +160,32 @@ posts   1/1     Running   0          82s
 # Tips
 
 - Add this line `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`
+
+# Scenarios
+
+### Updating code with running Deployment
+
+- make change in code
+- rebuild image **without** new version tag (implicitly @latest)
+- push image to DockerHub
+- update the Deployment yaml. Make sure it uses no version tag
+- apply Deployment
+- run Rollout command
+
+```shell
+❯ k rollout restart deployment posts-depl
+deployment.apps/posts-depl restarted
+
+blog/infra/k8s on  master [✘!?]
+❯ k get deployments
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+posts-depl   1/1     1            1           43s
+
+blog/infra/k8s on  master [✘!?]
+❯ k get pods
+NAME                      READY   STATUS    RESTARTS      AGE
+posts                     1/1     Running   1 (35m ago)   3d
+posts-depl-f78c77-hbl67   1/1     Running   0             14s
+```
+
+- Debug running pods with `kubectl logs <pod-id>` will print out logs

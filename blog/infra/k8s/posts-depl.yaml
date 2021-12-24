@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts-depl
+spec:
+  replicas: 1 # Number of pods we want to create running a specific image
+  selector: # which pods this Deployment will manage
+    matchLabels:
+      app: posts
+  template: # the configurations for each pod this Deployment is going to create
+    metadata:
+      labels:
+        app: posts
+    spec:
+      containers:
+        - name: posts
+          image: cqtan/posts
