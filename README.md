@@ -133,7 +133,7 @@ This resource object facilitates the communication both for within and the outsi
 
 ### NodePort
 
-Gets assigned a random port number once created, which can then be access from `http://localhost:30162/posts`
+Gets assigned a random port number once created, which can then be access from `http://localhost:30162/posts`. This is typically used for dev purposes to access Pods from the outside. Rather use Load Balancer
 
 ![nodeport](./screenshots/nodeport-communication.png)
 
@@ -150,7 +150,9 @@ posts-srv    NodePort    10.99.97.58   <none>        4000:30162/TCP   4m20s
 
 ### Cluster IP
 
-Manages communication between Pods
+Manages communication between Pods. You can also chain the creation of this resource object within the Deployment file.
+
+### Load Balancer
 
 # Commands
 
@@ -188,6 +190,7 @@ posts   1/1     Running   0          82s
 
 - Add this line `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`
 - You can chain the creation of multiple Resource Objects with `---` symbol
+- If you see the option `-f` you can alternatively do `.` to target all yaml files instead
 
 # Scenarios
 

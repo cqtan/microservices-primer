@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comments-depl
+spec:
+  replicas: 1 # Number of pods we want to create running a specific image
+  selector: # which pods this Deployment will manage
+    matchLabels:
+      app: comments
+  template: # the configurations for each pod this Deployment is going to create
+    metadata:
+      labels:
+        app: comments
+    spec:
+      containers:
+        - name: comments
+          image: cqtan/comments
+--- # chain the creation of multiple Resource Objects with this
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments-srv
+spec:
+  type: ClusterIP # can be left out as this is the default
+  selector:
+    app: comments # Find all Pods matching "app: comments"
+  ports:
+    - name: comments
+      protocol: TCP
+      port: 4001 # typically identical to port number of targetPort
+      targetPort: 4001 # Pod port

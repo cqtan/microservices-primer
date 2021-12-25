@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-depl
+spec:
+  replicas: 1 # Number of pods we want to create running a specific image
+  selector: # which pods this Deployment will manage
+    matchLabels:
+      app: query
+  template: # the configurations for each pod this Deployment is going to create
+    metadata:
+      labels:
+        app: query
+    spec:
+      containers:
+        - name: query
+          image: cqtan/query
+--- # chain the creation of multiple Resource Objects with this
+apiVersion: v1
+kind: Service
+metadata:
+  name: query-srv
+spec:
+  type: ClusterIP # can be left out as this is the default
+  selector:
+    app: query # Find all Pods matching "app: query"
+  ports:
+    - name: query
+      protocol: TCP
+      port: 4002 # typically identical to port number of targetPort
+      targetPort: 4002 # Pod port

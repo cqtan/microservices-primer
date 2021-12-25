@@ -23,7 +23,11 @@ app.post("/posts", async (req, res) => {
     title,
   };
 
-  await axios.post("http://localhost:4005/events", {
+  // Not using docker's clusterIP
+  // await axios.post("http://localhost:4005/events", {
+
+  // ClusterIP
+  await axios.post("http://event-bus-srv:4005/events", {
     type: "PostCreated",
     data: {
       id,
