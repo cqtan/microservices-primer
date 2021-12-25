@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-bus-depl
+spec:
+  replicas: 1 # Number of pods we want to create running a specific image
+  selector: # which pods this Deployment will manage
+    matchLabels:
+      app: event-bus
+  template: # the configurations for each pod this Deployment is going to create
+    metadata:
+      labels:
+        app: event-bus
+    spec:
+      containers:
+        - name: event-bus
+          image: cqtan/event-bus
+--- # chain the creation of multiple Resource Objects with this
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-bus-srv
+spec:
+  type: ClusterIP # can be left out as this is the default
+  selector:
+    app: event-bus # Find all Pods matching "app: event-bus"
+  ports:
+    - name: event-bus
+      protocol: TCP
+      port: 4005 # typically identical to port number of targetPort
+      targetPort: 4005 # Pod port

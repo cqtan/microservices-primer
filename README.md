@@ -125,6 +125,33 @@ Since some of the terms used in the context of Kubernetes is identical to terms 
 
 `Service`: Provides an easy-to-remember URL to access a running container. It is with this, the Event Bus will communicate with in order to access the isolated Micro Services.
 
+## Services
+
+This resource object facilitates the communication both for within and the outside.
+
+![services-types](./screenshots/services_types.png)
+
+### NodePort
+
+Gets assigned a random port number once created, which can then be access from `http://localhost:30162/posts`
+
+![nodeport](./screenshots/nodeport-communication.png)
+
+```
+❯ k apply -f posts-srv.yaml
+service/posts-srv created
+
+blog/infra/k8s on  master [?]
+❯ k get services
+NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
+kubernetes   ClusterIP   10.96.0.1     <none>        443/TCP          6d3h
+posts-srv    NodePort    10.99.97.58   <none>        4000:30162/TCP   4m20s
+```
+
+### Cluster IP
+
+Manages communication between Pods
+
 # Commands
 
 ## Docker
@@ -160,6 +187,7 @@ posts   1/1     Running   0          82s
 # Tips
 
 - Add this line `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`
+- You can chain the creation of multiple Resource Objects with `---` symbol
 
 # Scenarios
 
