@@ -19,7 +19,7 @@ app.post("/events", (req, res) => {
   axios.post("http://comments-srv:4001/events", event).catch((err) => {
     console.log("4001 errored");
   });
-  axios.post("http://query-srv :4002/events", event).catch((err) => {
+  axios.post("http://query-srv:4002/events", event).catch((err) => {
     console.log("4002 errored");
   });
   axios.post("http://moderation-srv:4003/events", event).catch((err) => {

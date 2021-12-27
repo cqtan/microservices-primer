@@ -133,11 +133,11 @@ This resource object facilitates the communication both for within and the outsi
 
 ### NodePort
 
-Gets assigned a random port number once created, which can then be access from `http://localhost:30162/posts`. This is typically used for dev purposes to access Pods from the outside. Rather use Load Balancer
+Gets assigned a random port number once created, which can then be access from `http://localhost:30162/posts`. This is typically used for dev purposes to access Pods from the outside since we need to manage the port number manually. Rather use Load Balancer
 
 ![nodeport](./screenshots/nodeport-communication.png)
 
-```
+```sh
 ❯ k apply -f posts-srv.yaml
 service/posts-srv created
 
@@ -152,7 +152,32 @@ posts-srv    NodePort    10.99.97.58   <none>        4000:30162/TCP   4m20s
 
 Manages communication between Pods. You can also chain the creation of this resource object within the Deployment file.
 
-### Load Balancer
+### Load Balancer & Ingress
+
+- Used as a single point of intereset for communication and helps routing to individual Pods
+- Technically the former job of provisioning a single point of interest is the responsibility of a Load Balancer Service and the latter routing responsibility is done by an `Ingress` (`Ingress Controller`) pod
+- Both work together: Once gets communication from the outside in to the cluser and the other for routing it to the correct pod's ClusterIP port.
+- Ingress exposes HTTP and HTTPS routes from outside the cluster to services within the cluster. Traffic routing is controlled by rules defined on the Ingress resource.
+
+![load-balancer](./screenshots/loadbalancer.png)
+![ingress](./screenshots/ingress-srv.png)
+
+Setting up Ingress with built-in Load Balancer
+
+- Taken from https://kubernetes.github.io/ingress-nginx/: run to install all necessary resource objects:
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml
+```
+
+- Create an Ingress config service so that it knows were to route incomming calls, here `/ingress-srv.yaml` and run it
+- For local development, edit your `/etc/hosts` file (tip: run `code /etc/hosts`) and when prompted run with permissions) and add this at the bottom
+
+```text
+127.0.0.1 posts.com
+```
+
+- This will route domains with name `posts.com` to localhost instead, which would essentially return the same response of `http://localhost:30162/posts` mentioned above
 
 # Commands
 
