@@ -103,7 +103,7 @@ A common issue is when a service is interrupted or a new service is introduced. 
 
 - Docker as our Containerization solution to contain each of our MS in an environment that includes everything it needs for it to run
 - Docker configs to include information / commands in order to run each service correctly
-- Kubternetes to easily manage mutliple containers in terms of: auto scaling, container communication, commands
+- Kubernetes to easily manage mutliple containers in terms of: auto scaling, container communication, commands
 
 ![kuberenets](screenshots/kubernetes.png)
 
@@ -216,10 +216,12 @@ posts   1/1     Running   0          82s
 - Add this line `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`
 - You can chain the creation of multiple Resource Objects with `---` symbol
 - If you see the option `-f` you can alternatively do `.` to target all yaml files instead
+- Use local development tool `brew install skaffold` to automate builing and applying Pods and Deployments by running `skaffold dev`
+  - if Skaffold does not exit gracefully, run `skaffold delete` to clean up manually
 
 # Scenarios
 
-### Updating code with running Deployment
+### Updating code with running Deployment Object
 
 - make change in code
 - rebuild image **without** new version tag (implicitly @latest)
