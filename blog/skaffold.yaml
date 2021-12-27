@@ -6,16 +6,16 @@ deploy:
       - ./infra/k8s/*
 build:
   local:
-    push: false
+    push: false # true by default
   artifacts:
     - image: cqtan/client
       context: client
       docker:
         dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.js"
-            dest: .
+      sync: # copy the matched file to the Pod directly, without rebuild / re-apply Deployment
+        manual: # ...this speeds up refresh time when file changes happen
+          - src: "src/**/*.js" # ...for any other file not matching: then rebuild and re-apply
+            dest: . # Copy destination
     - image: cqtan/comments
       context: comments
       docker:
