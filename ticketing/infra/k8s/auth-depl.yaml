@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment # Manage Pods
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1 # Find these Pods
+  selector:
+    matchLabels:
+      app: auth
+  template: # Make Pods
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: cqtan/auth
+---
+apiVersion: v1
+kind: Service # Setup communications for containers (default ClusterIP service)
+metadata:
+  name: auth-srv
+spec:
+  selector:
+    app: auth
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

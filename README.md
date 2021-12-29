@@ -56,7 +56,10 @@ In this case, Service D has its own Database, which gets populated through the E
 - Especially useful for the MS architecture for the advantages mentioned aboved
 - In summary, an event bus (also broker) receives emitted events and passes the data along to subscribers anytime an event is emitted
 
-# Blog example
+# Blog Example
+
+<details>
+<summary>Blog Example</summary>
 
 The following goes through a rough overview of the patterns used in tried and tested solutions by implementing them by hand.
 
@@ -179,6 +182,43 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 - This will route domains with name `posts.com` to localhost instead, which would essentially return the same response of `http://localhost:30162/posts` mentioned above
 
+</details>
+</br>
+</br>
+
+# Ticketing App
+
+- Simple app where users can login and post tickets to events, which other users can purchase
+- Purchase events triggers a timeframe in which the user must submit a Stripe Charge or else the ticket released to the pool of available tickets again
+
+## Learning Goals
+
+- Setup a k8s dev environment the cloud
+- More Micro Services gothas
+- DB Management (Mongo, Redis) between MSs
+- Auth and Payments
+- NextJs
+
+## Overview
+
+![overview-resources](./screenshots/t-overview-resources.png)
+
+![overview-services](./screenshots/t-overview-services.png)
+
+## Setup
+
+- Make sure Ingress is running:
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml
+```
+
+- For local development, edit your `/etc/hosts` file (tip: run `code /etc/hosts`) and when prompted run with permissions) and add this at the bottom
+
+```text
+127.0.0.1 ticketing.com
+```
+
 # Commands
 
 ## Docker
@@ -216,7 +256,7 @@ posts   1/1     Running   0          82s
 - Add this line `alias k="kubectl"` to your `.zshrc` file for a shortcut, e.g. `k get pods`
 - You can chain the creation of multiple Resource Objects with `---` symbol
 - If you see the option `-f` you can alternatively do `.` to target all yaml files instead
-- Use local development tool `brew install skaffold` to automate builing and applying Pods and Deployments by running `skaffold dev`
+- Use local development tool `brew install skaffold` to automate building and applying Pods and Deployments by running `skaffold dev`
   - if Skaffold does not exit gracefully, run `skaffold delete` to clean up manually
 
 # Scenarios
