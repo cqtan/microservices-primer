@@ -1,4 +1,5 @@
 import express from "express";
+import "express-async-errors";
 import { json } from "body-parser";
 import { currentUserRouter } from "./routes/current-user";
 import { signinRouter } from "./routes/signin";
@@ -16,7 +17,9 @@ app.use(signoutRouter);
 app.use(signupRouter);
 
 // After all the routes and request methods not matching
-app.all("*", () => {
+// Throws even though its async because of express-async-errors
+// express-async-errors: might not be needed in Express v5
+app.all("*", async () => {
   throw new NotFoundError();
 });
 
