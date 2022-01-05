@@ -205,6 +205,8 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 ![overview-services](./screenshots/t-overview-services.png)
 
+![overview-db](./screenshots/t-overview-db.png)
+
 ## Setup
 
 - Make sure Ingress is running:
@@ -258,6 +260,7 @@ posts   1/1     Running   0          82s
 - If you see the option `-f` you can alternatively do `.` to target all yaml files instead
 - Use local development tool `brew install skaffold` to automate building and applying Pods and Deployments by running `skaffold dev`
   - if Skaffold does not exit gracefully, run `skaffold delete` to clean up manually
+- If your `kubectl` commads requires you to login despite never having to do so before, chances are got switched to a different context. Try `kubectl config get-contexts` and perform on the right one the following, e.g `kubectl config use-context docker-desktop`
 
 # Scenarios
 
