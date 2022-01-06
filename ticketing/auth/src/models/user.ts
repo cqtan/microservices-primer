@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Password } from "../services/password";
 
 interface UserAttrs {
   email: string;
@@ -25,6 +26,16 @@ const userSchema = new mongoose.Schema<UserDoc>({
     type: String,
     required: true,
   },
+});
+
+// Mongoose built-in pre-hook that triggers before a specific event, e.g. save
+// Also triggers upon creation of a Document, e.g. new User(...)
+userSchema.pre("save", async function (done) {
+  if (this.isModified("password")) {
+    const hashed = await Password.toHash(this.get("password"));
+    this.set("password", hashed);
+  }
+  done();
 });
 
 // Pattern to give Mongoose type-checking

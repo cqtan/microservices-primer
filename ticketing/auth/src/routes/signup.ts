@@ -37,7 +37,7 @@ router.post(
     console.log("Creating a user...");
 
     const user = new User({ email, password });
-    await user.save();
+    await user.save(); // See pre-hook in /services/password for hashing
 
     res.status(201).send(user);
 
