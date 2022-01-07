@@ -221,6 +221,33 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 127.0.0.1 ticketing.com
 ```
 
+## Authentication / Authorization
+
+The Auth topic is a bit tricky with Micro Services. The has yet to be a standardized way to doing this though there here are 2 viable options, both with pros and cons:
+![auth-options](./screenshots/t-auth-options.png)
+
+- Option 1: Intuitive approach, however we are coupled to another service (same disadvantages as Synced Communication mentioned about)
+- Option 2: Follows Micro Services pattern, but has a timeframe in which a user can still abuse the system
+
+![auth-options](./screenshots/t-auth-flow.png)
+
+Since we are going for option 2, we can still mitigate the disadvantages to this timeframe by choose specific technologies:
+
+### JWT
+
+- Tamper-proof auth data Encryption Mechanism
+- Will contain other data related to Authorization as well
+- Should not contain private data, it is more of a flag
+- Also easily understood between different languages
+
+### Cookies
+
+- Our auth data Transport Mechanism
+- Using session-cookie to manage cookies
+- Since we are using Server-Side Rendering with NextJS we need a way to authenticate users from the first request as opposed to more traditional application where requests sequentially go from HTML, JS and then data. In short, cookies are the way to go!
+
+![auth-options](./screenshots/t-auth-serverside.png)
+
 # Commands
 
 ## Docker
