@@ -254,6 +254,7 @@ Since we are going for option 2, we can still mitigate the disadvantages to this
 - We can use built-in kubectl command to generate a secret and pass this along to each Pods Env Variables
   - `kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf`
 - This is managed in the Deployment config file of the service that needs it
+- `__v` and `password` or other sensitive / unnecessary data can be removed from the JSON response
 
 Results
 
