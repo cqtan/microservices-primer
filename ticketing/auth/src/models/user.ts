@@ -17,16 +17,29 @@ interface UserAttrs {
 
 type UserDoc = mongoose.Document & UserAttrs;
 
-const userSchema = new mongoose.Schema<UserDoc>({
-  email: {
-    type: String,
-    required: true,
+const userSchema = new mongoose.Schema<UserDoc>(
+  {
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    toJSON: {
+      // called when sending data back as JSON response
+      transform(doc, ret) {
+        ret.id = ret._id; // renaming "_id" to "id" for consistency
+        delete ret._id;
+        delete ret.password; // we don't want to return password
+        delete ret.__v; // this version id is unnecessary, removed as well
+      },
+    },
+  }
+);
 
 // Mongoose built-in pre-hook that triggers before a specific event, e.g. save
 // Also triggers upon creation of a Document, e.g. new User(...)

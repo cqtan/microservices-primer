@@ -3,6 +3,7 @@ import { body, validationResult } from "express-validator";
 import { BadRequestError } from "../errors/bad-custom-error";
 import { RequestValidationError } from "../errors/request-validation-error";
 import { User } from "../models/user";
+import jwt from "jsonwebtoken";
 // import { DatabaseConnectionError } from "../errors/database-connection-error";
 
 const router = express.Router();
@@ -38,6 +39,23 @@ router.post(
 
     const user = new User({ email, password });
     await user.save(); // See pre-hook in /services/password for hashing
+
+    // Generate JWT (sync)
+    const userJwt = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      // "asdf"
+      process.env.JWT_KEY!
+    );
+
+    // Store it on session object
+    req.session = {
+      jwt: userJwt,
+    };
+
+    res.status(201).send(user);
 
     res.status(201).send(user);
 

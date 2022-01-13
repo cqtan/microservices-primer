@@ -15,6 +15,12 @@ spec:
       containers:
         - name: auth
           image: cqtan/auth
+          env: # Load an Env variable
+            - name: JWT_KEY # set it to this name
+              valueFrom: # Make sure you actaully have generated a key through kubectl
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service # Setup communications for containers (default ClusterIP service)

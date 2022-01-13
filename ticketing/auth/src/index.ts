@@ -36,6 +36,11 @@ app.all("*", async () => {
 app.use(errorHandler);
 
 const start = async () => {
+  // Make sure that we actually have a secret key for JWT right from the beginning
+  if (!process.env.JWT_KEY) {
+    throw new Error("JWT_KEY not defined!!");
+  }
+
   try {
     // await mongoose.connect("mongodb://localhost") // we use instance in Pods instead!
     await mongoose.connect("mongodb://auth-mongo-srv:27017/auth");

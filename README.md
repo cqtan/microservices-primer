@@ -248,6 +248,50 @@ Since we are going for option 2, we can still mitigate the disadvantages to this
 
 ![auth-options](./screenshots/t-auth-serverside.png)
 
+### Managing Auth between microservices services
+
+- Since JWT is encoded with a secret key, this key is also needed for decoding in the various Pods
+- We can use built-in kubectl command to generate a secret and pass this along to each Pods Env Variables
+  - `kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf`
+- This is managed in the Deployment config file of the service that needs it
+
+Results
+
+https://ticketing.com/api/users/signup
+
+```json
+{
+  "email": "test5@test.com",
+  "password": "8777600970cf35f33b699af4fe38729eb4788c4aa9294c9fa95054912812f0985f2e42b94653cfde159a71424af6d3a4bdfd8ab6d1d8a6229d0c55ce7a4a2b65.63a1d26af0020ec3",
+  "_id": "61e0a2a969dea1b6b3f4db77",
+  "__v": 0
+}
+```
+
+Session Cookie JWT (encoded in base64)
+
+```bash
+eyJqd3QiOiJleUpoYkdjaU9pSklVekkxTmlJc0luUjVjQ0k2SWtwWFZDSjkuZXlKcFpDSTZJall4WlRCaE1tRTVOamxrWldFeFlqWmlNMlkwWkdJM055SXNJbVZ0WVdsc0lqb2lkR1Z6ZERWQWRHVnpkQzVqYjIwaUxDSnBZWFFpT2pFMk5ESXhNVEUyTlRkOS4xQjlDanRPZHhqbGJpVk5vSmItdTRZN3RNdFFOSF9JcHFkSFo0QWtkQjNZIn0%3D
+```
+
+JWT encoded with secret
+
+```bash
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxZTBhMmE5NjlkZWExYjZiM2Y0ZGI3NyIsImVtYWlsIjoidGVzdDVAdGVzdC5jb20iLCJpYXQiOjE2NDIxMTE2NTd9.0mIx6UEoHnt7xsVCyO8lIuH3Vyv1W_oyWxkN0j-cbk8
+```
+
+JWT decoded with jwt.io
+
+```bash
+{
+  "id": "61e0a2a969dea1b6b3f4db77",
+  "email": "test5@test.com",
+  "iat": 1642111657
+}
+```
+
+![auth-options](./screenshots/t-auth-secret.png)
+
 # Commands
 
 ## Docker
@@ -273,6 +317,8 @@ Since we are going for option 2, we can still mitigate the disadvantages to this
 - `kubectl describe pod <pod-name>`: Print out infos about the running Pod. Typically, to check the Event section for errors
 - replace `pods` with `deployments` for Deployment commands
 - `kubectl rollout restart deployments <depl-name>`
+- `kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf`: Create a secret with id `jwt-secret`, contains `JWT_KEY=asdf` (secret)
+- `kubectl get secrets`: List all secret ids
 
 ```sh
 ❯ kubectl get pods
@@ -288,6 +334,9 @@ posts   1/1     Running   0          82s
 - Use local development tool `brew install skaffold` to automate building and applying Pods and Deployments by running `skaffold dev`
   - if Skaffold does not exit gracefully, run `skaffold delete` to clean up manually
 - If your `kubectl` commads requires you to login despite never having to do so before, chances are got switched to a different context. Try `kubectl config get-contexts` and perform on the right one the following, e.g `kubectl config use-context docker-desktop`
+- Postman: Requests default to http. To get JWT Cookie you must use https instead.
+  - Session Cookie containing the JWT is encoded in base64. use this decoder https://www.base64decode.org/ to decode it to the JWT
+  - Afterwards decode JWT here https://jwt.io/
 
 # Scenarios
 
