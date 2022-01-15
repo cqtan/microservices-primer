@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 import { BadRequestError } from "../errors/bad-custom-error";
-import { RequestValidationError } from "../errors/request-validation-error";
 import { User } from "../models/user";
 import jwt from "jsonwebtoken";
+import { validateRequest } from "../middlewares/validate-requests";
 // import { DatabaseConnectionError } from "../errors/database-connection-error";
 
 const router = express.Router();
@@ -17,15 +17,17 @@ router.post(
       .isLength({ min: 4, max: 20 })
       .withMessage("Password must be between 4 and 20 characters!"),
   ],
+  validateRequest,
   async (req: Request, res: Response) => {
-    const errors = validationResult(req);
+    // Using validateRequest() middleware instead
+    // const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      //   return res.status(400).send(errors.array()); // sends: [...] instead of { errors: [...] }
+    // if (!errors.isEmpty()) {
+    //   //   return res.status(400).send(errors.array()); // sends: [...] instead of { errors: [...] }
 
-      //   throw new Error("Invalid email or password!");
-      throw new RequestValidationError(errors.array());
-    }
+    //   //   throw new Error("Invalid email or password!");
+    //   throw new RequestValidationError(errors.array());
+    // }
 
     const { email, password } = req.body;
 
