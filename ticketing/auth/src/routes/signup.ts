@@ -59,8 +59,6 @@ router.post(
 
     res.status(201).send(user);
 
-    res.status(201).send(user);
-
     // Mocking DB down
     // throw new Error("Error connecting to DB");
     // throw new DatabaseConnectionError(errors.array());
