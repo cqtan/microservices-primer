@@ -37,7 +37,7 @@ router.post(
       throw new BadRequestError("Email already in use!");
     }
 
-    console.log("Creating a user...");
+    // console.log("Creating a user...");
 
     const user = new User({ email, password });
     await user.save(); // See pre-hook in /services/password for hashing
