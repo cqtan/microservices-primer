@@ -293,6 +293,15 @@ JWT decoded with jwt.io
 
 ![auth-options](./screenshots/t-auth-secret.png)
 
+---
+
+## Testing
+
+### Notes
+
+- Use `mongodb-memory-server` as in-memory mongo db server for testing purposes only
+- For faster build, make sure to change Dockerfile to avoid dev-deps with `RUN npm install --only-prod`
+
 # Commands
 
 ## Docker
