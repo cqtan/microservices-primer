@@ -302,9 +302,15 @@ JWT decoded with jwt.io
 - Use `mongodb-memory-server` as in-memory mongo db server for testing purposes only
 - For faster build, make sure to change Dockerfile to avoid dev-deps with `RUN npm install --only-prod`
 
+---
+
 ## Next Gotchas
 
-- file names within the `pages` folder are also route paths
+![next-auth](./screenshots/t-next-auth.png)
+
+- File names within the `pages` folder are also route paths
+
+---
 
 # Commands
 
