@@ -1,12 +1,13 @@
 import express, { Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import { currentUser } from "../middlewares/currentUser";
+import { requireAuth } from "../middlewares/require-auth";
 
 const router = express.Router();
 
 router.get(
   "/api/users/currentuser",
-  [currentUser],
+  currentUser,
+  requireAuth,
   (req: Request, res: Response) => {
     res.send({ currentUser: req.currentUser || null });
   }
