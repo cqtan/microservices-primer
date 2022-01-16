@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { body } from "express-validator";
 import { BadRequestError } from "../errors/bad-custom-error";
 import { validateRequest } from "../middlewares/validate-requests";
