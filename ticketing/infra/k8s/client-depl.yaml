@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment # Manage Pods
+metadata:
+  name: client-depl
+spec:
+  replicas: 1 # Find these Pods
+  selector:
+    matchLabels:
+      app: client
+  template: # Make Pods
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: cqtan/client
+
+---
+apiVersion: v1
+kind: Service # Setup communications for containers (default ClusterIP service)
+metadata:
+  name: client-srv
+spec:
+  selector:
+    app: client # Find Pods with label "client"
+  ports:
+    - name: client # port name for logging purposes
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

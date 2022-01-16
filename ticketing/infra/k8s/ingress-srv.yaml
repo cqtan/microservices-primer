@@ -9,7 +9,7 @@ spec:
   rules:
     - host: ticketing.com # domain name
       http:
-        paths:
+        paths: # order is important! List most specific on top
           - path: /api/users/?(.*) # if this request matches regex...
             pathType: Prefix
             backend:
@@ -17,3 +17,10 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          - path: /?(.*) # if this request matches regex...
+            pathType: Prefix
+            backend:
+              service: # ... send request to this service and port
+                name: client-srv
+                port:
+                  number: 3000 # using same port number since it is local within Pods
