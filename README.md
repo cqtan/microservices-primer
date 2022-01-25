@@ -306,6 +306,20 @@ JWT decoded with jwt.io
 
 ## Next Gotchas
 
+### Setup
+
+- Make sure you have a running Ingress Container with:
+  `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml`
+- Run local containers `skaffold dev`
+- Run client: `npm run dev`
+- Make sure to have configured your `/etc/hosts` file (tip: run `code /etc/hosts`) and when prompted run with permissions) and add this at the bottom
+
+```text
+127.0.0.1 ticketing.com
+```
+
+- https is required for cookies: https://ticketing.com/auth/signup
+
 ![next-auth](./screenshots/t-next-auth.png)
 
 - File names within the `pages` folder are also route paths
