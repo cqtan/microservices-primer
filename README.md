@@ -324,6 +324,23 @@ JWT decoded with jwt.io
 
 - File names within the `pages` folder are also route paths
 
+### Server Side Rendering within Pods
+
+- Node will assume the current domain name to be the default, when calling endpoints. This is an issue when working in Docker environment since each Pod has their own domain name, e.g. `auth-srv`
+- Typicall SSR happens within `<component>.getInitialProps(() => {...})`, however the domain name needs to be dynamic as well so that when a user calls `https://ticketing.com/api/users/currentuser` the request is passed to the correct Pod domain is called: `https://auth-srv/users/currentuser`
+
+![next-auth](./screenshots/t-next-auth-call.png)
+
+- Why not option 2?: Client Pod would need to know `/auth-srv` domain name and possibly others as well
+- Option 1: We pass the routing back to Ingress so that we do not need to handle domain names
+  - We simply need to know the correct namespace and service name of Ingress and call it in this pattern `http://<SERIVCE_NAME>.NAMESPACE.svc.cluster.local`
+- The Ingress service that is running locally is not running on the default namespace like our current Pods, which is why it is not listed on `kubectl get services`
+- Find the service name (`ingress-nginx-controller`) through the namespace like so:
+
+![next-auth](./screenshots/t-next-ingress-namespace.png)
+
+![next-auth](./screenshots/t-next-namespace.png)
+
 ---
 
 # Commands
