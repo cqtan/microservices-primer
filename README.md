@@ -194,7 +194,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ## Learning Goals
 
 - Setup a k8s dev environment the cloud
-- More Micro Services gothas
+- More Micro Services gotchas
 - DB Management (Mongo, Redis) between MSs
 - Auth and Payments
 - NextJs
@@ -206,6 +206,19 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ![overview-services](./screenshots/t-overview-services.png)
 
 ![overview-db](./screenshots/t-overview-db.png)
+
+## Auth Service
+
+<details>
+<summary>
+Summary
+
+- this service utilizes JWT with Cookies in order to transport auth related data between client and server
+- secrets can be made in Pods with `kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf`
+- auth flows and JWT management are described in this section while a Mongo Pod persists data
+- Ingress is introduced as a router between Pods between client and server, making way for a short client implementation detour
+
+</summary>
 
 ## Setup
 
@@ -231,7 +244,7 @@ The Auth topic is a bit tricky with Micro Services. The has yet to be a standard
 
 ![auth-options](./screenshots/t-auth-flow.png)
 
-Since we are going for option 2, we can still mitigate the disadvantages to this timeframe by choose specific technologies:
+Since we are going for option 2, we can still mitigate the disadvantages to this timeframe by choosing specific technologies:
 
 ### JWT
 
@@ -301,6 +314,91 @@ JWT decoded with jwt.io
 
 - Use `mongodb-memory-server` as in-memory mongo db server for testing purposes only
 - For faster build, make sure to change Dockerfile to avoid dev-deps with `RUN npm install --only-prod`
+
+</details>
+
+---
+
+## NextJS Gotchas
+
+<details>
+<summary>
+Summary
+
+This section deals with client-side authentication user flow, i.e. sign up/in/out with important configurations to make communication work in a Docker Micro services environment:
+
+- When running Nextjs client within a local Pod, make sure that these configurations are set before Skaffold creates the Pod so that we get hot-reload enabled. Configure this at top-level `next.config.js` file
+- Top level entry point for should be called `_app.js/tsx` file
+- Server work should be done within `<component>.getInitialProps(() => {...})`
+- See `getInitialProps` setup in `_app.js` so that child components may use `getInitialProps` as well
+- For communicating with multiple server Pods, we let Ingress figure out the domain name of each Pod instead of hard-coding them:
+  - See `build_client.js` file `"http://ingress-nginx-controller.ingress-nginx.svc.cluster.local"`
+  - Also includes the header data for Cookies
+
+</summary>
+
+### Setup
+
+- Make sure you have a running Ingress Container with:
+  `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml`
+- Run local containers `skaffold dev`
+- Run client: `npm run dev`
+- Make sure to have configured your `/etc/hosts` file (tip: run `code /etc/hosts`) and when prompted run with permissions) and add this at the bottom
+
+```text
+127.0.0.1 ticketing.com
+```
+
+- https is required for cookies: https://ticketing.com/auth/signup
+
+![next-auth](./screenshots/t-next-auth.png)
+
+- File names within the `pages` folder are also route paths
+
+### Server Side Rendering within Pods
+
+- Node will assume the current domain name to be the default, when calling endpoints. This is an issue when working in Docker environment since each Pod has their own domain name, e.g. `auth-srv`
+- Typically, SSR happens within `<component>.getInitialProps(() => {...})`, however the domain name needs to be dynamic as well so that when a user calls `https://ticketing.com/api/users/currentuser` the request is passed to the correct Pod domain is called: `https://auth-srv/users/currentuser`
+
+![next-auth](./screenshots/t-next-auth-call.png)
+
+- Why not option 2?: Client Pod would need to know `/auth-srv` domain name and possibly others as well
+- Option 1: We pass the routing back to Ingress so that we do not need to handle domain names
+  - We simply need to know the correct namespace and service name of Ingress and call it in this pattern `http://<SERIVCE_NAME>.NAMESPACE.svc.cluster.local`
+- The Ingress service that is running locally is not running on the default namespace like our current Pods, which is why it is not listed on `kubectl get services`
+- Find the service name (`ingress-nginx-controller`) through the namespace like so:
+
+![next-auth](./screenshots/t-next-ingress-namespace.png)
+
+![next-auth](./screenshots/t-next-namespace.png)
+
+## Summary
+
+- When running Nextjs client within a local Pod, make sure that these configurations are set before Skaffold creates the Pod so that we hot-reload enabled
+
+top-level `next.config.js`
+
+```
+module.exports = {
+  webpackDevMiddleware: (config) => {
+    config.watchOptions.poll = 300; // workaround for fast reload within Pods
+    return config;
+  },
+};
+```
+
+- Top level entry point for should be called `_app.js/tsx` file
+- Server work should be done within `<component>.getInitialProps(() => {...})`
+- See `getInitialProps` setup in `_app.js` so that child components may use `getInitialProps` as well
+- For communicating with multiple server Pods, we let Ingress figure out the domain name of each Pod instead of hard-coding them:
+  - See `build_client.js` file `"http://ingress-nginx-controller.ingress-nginx.svc.cluster.local"`
+  - Also includes the header data for Cookies
+
+</details>
+</br>
+</br>
+
+---
 
 # Commands
 

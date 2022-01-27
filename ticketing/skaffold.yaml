@@ -7,7 +7,7 @@ deploy:
 build:
   local:
     push: false
-  artifacts:
+  artifacts: #  Auto syncing to Pods for specific folders and files listed here
     - image: cqtan/auth
       context: auth
       docker:
@@ -15,4 +15,12 @@ build:
       sync:
         manual:
           - src: "src/**/*.ts"
+            dest: .
+    - image: cqtan/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "**/*.js"
             dest: .
