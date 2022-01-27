@@ -327,7 +327,7 @@ JWT decoded with jwt.io
 ### Server Side Rendering within Pods
 
 - Node will assume the current domain name to be the default, when calling endpoints. This is an issue when working in Docker environment since each Pod has their own domain name, e.g. `auth-srv`
-- Typicall SSR happens within `<component>.getInitialProps(() => {...})`, however the domain name needs to be dynamic as well so that when a user calls `https://ticketing.com/api/users/currentuser` the request is passed to the correct Pod domain is called: `https://auth-srv/users/currentuser`
+- Typically, SSR happens within `<component>.getInitialProps(() => {...})`, however the domain name needs to be dynamic as well so that when a user calls `https://ticketing.com/api/users/currentuser` the request is passed to the correct Pod domain is called: `https://auth-srv/users/currentuser`
 
 ![next-auth](./screenshots/t-next-auth-call.png)
 

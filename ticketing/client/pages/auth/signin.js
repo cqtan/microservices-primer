@@ -1,10 +1,12 @@
 import { useState } from "react";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import useRequest from "../../hooks/use-request";
 
 export default () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+
   const { doRequest, errors } = useRequest({
     url: "/api/users/signin",
     method: "post",
@@ -12,7 +14,7 @@ export default () => {
       email,
       password,
     },
-    onSuccess: () => Router.push("/"),
+    onSuccess: () => router.push("/"),
   });
 
   const onSubmit = async (event) => {
