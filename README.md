@@ -194,7 +194,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ## Learning Goals
 
 - Setup a k8s dev environment the cloud
-- More Micro Services gothas
+- More Micro Services gotchas
 - DB Management (Mongo, Redis) between MSs
 - Auth and Payments
 - NextJs
@@ -206,6 +206,19 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 ![overview-services](./screenshots/t-overview-services.png)
 
 ![overview-db](./screenshots/t-overview-db.png)
+
+## Auth Service
+
+<details>
+<summary>
+Summary
+
+- this service utilizes JWT with Cookies in order to transport auth related data between client and server
+- secrets can be made in Pods with `kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf`
+- auth flows and JWT management are described in this section while a Mongo Pod persists data
+- Ingress is introduced as a router between Pods between client and server, making way for a short client implementation detour
+
+</summary>
 
 ## Setup
 
@@ -231,7 +244,7 @@ The Auth topic is a bit tricky with Micro Services. The has yet to be a standard
 
 ![auth-options](./screenshots/t-auth-flow.png)
 
-Since we are going for option 2, we can still mitigate the disadvantages to this timeframe by choose specific technologies:
+Since we are going for option 2, we can still mitigate the disadvantages to this timeframe by choosing specific technologies:
 
 ### JWT
 
@@ -302,9 +315,27 @@ JWT decoded with jwt.io
 - Use `mongodb-memory-server` as in-memory mongo db server for testing purposes only
 - For faster build, make sure to change Dockerfile to avoid dev-deps with `RUN npm install --only-prod`
 
+</details>
+
 ---
 
-## Next Gotchas
+## NextJS Gotchas
+
+<details>
+<summary>
+Summary
+
+This section deals with client-side authentication user flow, i.e. sign up/in/out with important configurations to make communication work in a Docker Micro services environment:
+
+- When running Nextjs client within a local Pod, make sure that these configurations are set before Skaffold creates the Pod so that we get hot-reload enabled. Configure this at top-level `next.config.js` file
+- Top level entry point for should be called `_app.js/tsx` file
+- Server work should be done within `<component>.getInitialProps(() => {...})`
+- See `getInitialProps` setup in `_app.js` so that child components may use `getInitialProps` as well
+- For communicating with multiple server Pods, we let Ingress figure out the domain name of each Pod instead of hard-coding them:
+  - See `build_client.js` file `"http://ingress-nginx-controller.ingress-nginx.svc.cluster.local"`
+  - Also includes the header data for Cookies
+
+</summary>
 
 ### Setup
 
@@ -340,6 +371,32 @@ JWT decoded with jwt.io
 ![next-auth](./screenshots/t-next-ingress-namespace.png)
 
 ![next-auth](./screenshots/t-next-namespace.png)
+
+## Summary
+
+- When running Nextjs client within a local Pod, make sure that these configurations are set before Skaffold creates the Pod so that we hot-reload enabled
+
+top-level `next.config.js`
+
+```
+module.exports = {
+  webpackDevMiddleware: (config) => {
+    config.watchOptions.poll = 300; // workaround for fast reload within Pods
+    return config;
+  },
+};
+```
+
+- Top level entry point for should be called `_app.js/tsx` file
+- Server work should be done within `<component>.getInitialProps(() => {...})`
+- See `getInitialProps` setup in `_app.js` so that child components may use `getInitialProps` as well
+- For communicating with multiple server Pods, we let Ingress figure out the domain name of each Pod instead of hard-coding them:
+  - See `build_client.js` file `"http://ingress-nginx-controller.ingress-nginx.svc.cluster.local"`
+  - Also includes the header data for Cookies
+
+</details>
+</br>
+</br>
 
 ---
 

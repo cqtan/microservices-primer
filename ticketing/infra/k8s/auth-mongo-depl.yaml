@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth-mongo
-          image: mongo
+          image: mongo # official MongoDB image https://hub.docker.com/_/mongo/
 
 ---
 apiVersion: v1
