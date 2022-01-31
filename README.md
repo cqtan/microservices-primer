@@ -409,6 +409,17 @@ module.exports = {
 - CRUD operations for booking tickets
 - </summary>
 
+### CRUDs
+
+- `/api/tickets`: GET, Retrieve all tickets
+- `/api/tickets/:id`: GET, Retrieve ticket with specific ID
+- `/api/tickets`: POST, { title: string, price: string }, Create a ticket (auth)
+- `/api/tickets`: PUT, { title: string, price: string }, Update a ticket (auth)
+
+## Setup
+
+- As usual: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml`
+
 </details>
 
 ---

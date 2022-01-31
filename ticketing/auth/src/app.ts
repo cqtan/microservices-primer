@@ -19,7 +19,7 @@ app.use(
   })
 );
 
-app.use(currentUserRouter);
+app.use(currentUserRouter); // check for current user in cookie
 app.use(signinRouter);
 app.use(signoutRouter);
 app.use(signupRouter);
