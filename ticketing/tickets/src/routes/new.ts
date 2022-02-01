@@ -1,7 +1,7 @@
 import { requireAuth, validateRequest } from "@cqtickets/common";
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
-import { Ticket } from "../models/tickets";
+import { Ticket } from "../models/ticket";
 
 const router = express.Router();
 
