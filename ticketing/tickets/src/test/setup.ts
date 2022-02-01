@@ -45,7 +45,7 @@ global.signin = async () => {
   // Faking Cookie data for tests:
   // Build a JWT payload.  { id, email }
   const payload = {
-    id: "12313345",
+    id: new mongoose.Types.ObjectId().toHexString(),
     email: "test@test.com",
   };
 

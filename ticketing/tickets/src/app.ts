@@ -6,6 +6,7 @@ import { currentUser, errorHandler, NotFoundError } from "@cqtickets/common";
 import { createTicketRouter } from "./routes/new";
 import { showTicketRouter } from "./routes/show";
 import { indexTicketRouter } from "./routes";
+import { updateTicketRouter } from "./routes/update";
 
 const app = express();
 app.set("trust proxy", true); // Since we proxy data through Ingress
@@ -21,6 +22,7 @@ app.use(currentUser);
 app.use(createTicketRouter);
 app.use(showTicketRouter);
 app.use(indexTicketRouter);
+app.use(updateTicketRouter);
 
 // After all the routes and request methods not matching
 // Throws even though its async because of express-async-errors
