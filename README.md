@@ -406,7 +406,7 @@ module.exports = {
 <summary>
 
 - After the Auth service comes the actual Ticket booking section
-- CRUD operations for booking tickets
+- CRU(D) operations for booking tickets
 - </summary>
 
 ### CRUDs
@@ -416,9 +416,13 @@ module.exports = {
 - `/api/tickets`: POST, { title: string, price: string }, Create a ticket (auth)
 - `/api/tickets`: PUT, { title: string, price: string }, Update a ticket (auth)
 
-## Setup
+## Summary
 
-- As usual: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml`
+- setup as usual: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml`
+- implementation is fairly similar to auth service
+- Add k8s files: tickets-depl.yaml, tickets-mongo-depl.yaml and update ingress.srv.yaml
+- Add new routes
+- Double check in Postman
 
 </details>
 
