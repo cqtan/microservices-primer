@@ -400,6 +400,34 @@ module.exports = {
 
 ---
 
+## Tickets Service
+
+<details>
+<summary>
+
+- After the Auth service comes the actual Ticket booking section
+- CRU(D) operations for booking tickets
+- </summary>
+
+### CRUDs
+
+- `/api/tickets`: GET, Retrieve all tickets
+- `/api/tickets/:id`: GET, Retrieve ticket with specific ID
+- `/api/tickets`: POST, { title: string, price: string }, Create a ticket (auth)
+- `/api/tickets`: PUT, { title: string, price: string }, Update a ticket (auth)
+
+## Summary
+
+- setup as usual: `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml`
+- implementation is fairly similar to auth service
+- Add k8s files: tickets-depl.yaml, tickets-mongo-depl.yaml and update ingress.srv.yaml
+- Add new routes
+- Double check in Postman
+
+</details>
+
+---
+
 # Commands
 
 ## Docker
@@ -441,6 +469,7 @@ posts   1/1     Running   0          82s
 - If you see the option `-f` you can alternatively do `.` to target all yaml files instead
 - Use local development tool `brew install skaffold` to automate building and applying Pods and Deployments by running `skaffold dev`
   - if Skaffold does not exit gracefully, run `skaffold delete` to clean up manually
+  - Skaffold assumes that you have already build the local Docker image so it pulls it from DockerHub. Make sure to `docker build -t cqtan/<app-name> .` and `docker push` first
 - If your `kubectl` commads requires you to login despite never having to do so before, chances are got switched to a different context. Try `kubectl config get-contexts` and perform on the right one the following, e.g `kubectl config use-context docker-desktop`
 - Postman: Requests default to http. To get JWT Cookie you must use https instead.
   - Session Cookie containing the JWT is encoded in base64. use this decoder https://www.base64decode.org/ to decode it to the JWT

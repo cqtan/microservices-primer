@@ -2,12 +2,11 @@ import express from "express";
 import "express-async-errors"; // enables throws to occur in promises as well
 import { json } from "body-parser";
 import cookieSession from "cookie-session";
-
-import { currentUserRouter } from "./routes/current-user";
-import { signinRouter } from "./routes/signin";
-import { signoutRouter } from "./routes/signout";
-import { signupRouter } from "./routes/signup";
-import { errorHandler, NotFoundError } from "@cqtickets/common";
+import { currentUser, errorHandler, NotFoundError } from "@cqtickets/common";
+import { createTicketRouter } from "./routes/new";
+import { showTicketRouter } from "./routes/show";
+import { indexTicketRouter } from "./routes";
+import { updateTicketRouter } from "./routes/update";
 
 const app = express();
 app.set("trust proxy", true); // Since we proxy data through Ingress
@@ -18,11 +17,12 @@ app.use(
     secure: process.env.NODE_ENV !== "test", // Only Https except for tests
   })
 );
+app.use(currentUser);
 
-app.use(currentUserRouter); // check for current user in cookie
-app.use(signinRouter);
-app.use(signoutRouter);
-app.use(signupRouter);
+app.use(createTicketRouter);
+app.use(showTicketRouter);
+app.use(indexTicketRouter);
+app.use(updateTicketRouter);
 
 // After all the routes and request methods not matching
 // Throws even though its async because of express-async-errors

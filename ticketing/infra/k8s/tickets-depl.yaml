@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment # Manage Pods
+metadata:
+  name: tickets-depl
+spec:
+  replicas: 1 # Find these Pods
+  selector:
+    matchLabels:
+      app: tickets
+  template: # Make Pods
+    metadata:
+      labels:
+        app: tickets
+    spec:
+      containers:
+        - name: tickets
+          image: cqtan/tickets
+          env: # Load Env variables
+            - name: MONGO_URI
+              value: mongodb://tickets-mongo-srv:27017/tickets
+            - name: JWT_KEY # set it to this name
+              valueFrom: # Make sure you actaully have generated a key through kubectl
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service # Setup communications for containers (default ClusterIP service)
+metadata:
+  name: tickets-srv
+spec:
+  selector:
+    app: tickets
+  ports:
+    - name: tickets
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

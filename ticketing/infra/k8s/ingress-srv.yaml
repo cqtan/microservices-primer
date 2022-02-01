@@ -17,6 +17,13 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          - path: /api/tickets/?(.*) # if this request matches regex...
+            pathType: Prefix
+            backend:
+              service: # ... send request to this service and port
+                name: tickets-srv
+                port:
+                  number: 3000
           - path: /?(.*) # if this request matches regex...
             pathType: Prefix
             backend:
