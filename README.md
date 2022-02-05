@@ -407,7 +407,7 @@ module.exports = {
 
 - After the Auth service comes the actual Ticket booking section
 - CRU(D) operations for booking tickets
-- </summary>
+</summary>
 
 ### CRUDs
 
@@ -423,6 +423,29 @@ module.exports = {
 - Add k8s files: tickets-depl.yaml, tickets-mongo-depl.yaml and update ingress.srv.yaml
 - Add new routes
 - Double check in Postman
+
+</details>
+
+## NATS Streaming Server / Event Bus
+
+<details>
+
+<summary>
+
+- built on top of NATS
+- Uisng node-nats-streaming as client to connect to our NATS streaming Server
+- Uses the concept of channels (aka. subjects or topics) to organize and scope different subscriptions
+- NATS saves all events that happend in case any subscribed services has a delay (e.g. had to restart) so that then can catch up
+
+</summary>
+
+### NATS demo
+
+![nats-overview](./screenshots/t-nats-overview.png)
+
+- Quick demo to learn the important steps in using this service
+- For this demo we simply give access to the NATS Pod through port forwarding `kubectl port-forward nats-depl-5977fcdfcf-2qpz9 4222:4222` instead of creating a config or editing our existing Ingress config
+  - get NATS pod name with `kubectl get pods`
 
 </details>
 
