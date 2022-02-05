@@ -1,5 +1,8 @@
 import nats from "node-nats-streaming";
 
+// Jest to clean up logs after every event
+console.clear();
+
 // stan === client
 const stan = nats.connect("ticketing", "abc", {
   url: "http://localhost:4222",
