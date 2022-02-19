@@ -407,7 +407,7 @@ module.exports = {
 
 - After the Auth service comes the actual Ticket booking section
 - CRU(D) operations for booking tickets
-- </summary>
+</summary>
 
 ### CRUDs
 
@@ -423,6 +423,86 @@ module.exports = {
 - Add k8s files: tickets-depl.yaml, tickets-mongo-depl.yaml and update ingress.srv.yaml
 - Add new routes
 - Double check in Postman
+
+</details>
+
+## NATS Streaming Server / Event Bus
+
+<details>
+
+<summary>
+
+- built on top of NATS
+- Uisng node-nats-streaming as client to connect to our NATS streaming Server
+- Uses the concept of channels (aka. subjects or topics) to organize and scope different subscriptions
+- NATS saves all events that happend in case any subscribed services has a delay (e.g. had to restart) so that then can catch up
+
+</summary>
+
+### NATS demo
+
+![nats-overview](./screenshots/t-nats-overview.png)
+
+### Setup
+
+- `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml`
+- `skaffold dev`
+- `kubectl get pods`
+- `kubectl port-forward <nats-pod-name> 4222:4222`
+- `kubectl port-forward <nats-pod-name> 8222:8222`
+
+- Quick demo to learn the important steps in using this service
+- For this demo we simply give access to the NATS Pod through port forwarding `kubectl port-forward nats-depl-5977fcdfcf-2qpz9 4222:4222` instead of creating a config or editing our existing Ingress config
+  - get NATS pod name with `kubectl get pods`
+- Run both the listener `npm run listen` and publisher `npm run publish` and simply save the publisher.ts file to emit events (since it has the `--rs` flag for resetting)
+
+### NATS in detail
+
+- **Queue-Groups (aka. qGroups)**: In cases where you apply horizonal scaling to Listeners (duplicating Listeners to handle more load), you sometimes do not want to let all Listeners receive events. For instance, do not let all Orders-services ship orders after receiving the event but only let 1 of these services handle it. You can mark these Listeners with a unique `clientID` instead
+
+```ts
+const subscription = stan.subscribe(
+  "ticket:created",
+  "orders-service-queue-group",
+  options
+);
+```
+
+- **Manual Acknowledgment**: Default behavior for Queue-Groups is to automatically sign off / acknowledge an event the moment it receives it. But sometimes, things can go wrong while the event is being process, e.g. DB issues, and the event is lost. In this case, we can manually acknowledge the event after all processing is done and in any case it fails, the event is passed along to the next Listener in the Queue-Group
+
+  - This option can be added on like so: `const options = stan.subscriptionOptions().setManualAckMode(true);`
+
+- **Monitoring**: If you want to see logs in case you suspect something went wrong and there are no error logs, then you can port-forward the monitoring port listed in the `nats-depl.yaml` by getting the Nats Pod name and doing the following: `kubectl port-forward nats-depl-5977fcdfcf-2qpz9 8222:8222`
+- You should be able to access the monitoring service now on `localhost:8222/streaming`
+
+- **Concurrency Issues**: There is a grace period in which NATS will continue to send events to Listeners even though a Listener could have been interrupted or terminated, making the event be lost
+
+  - This can be observed in the monitoring view `localhost:8222/streaming/channelz?subs=1` (if you are fast enough). There, more Listeners may be listed since NATS may not have noticed that a Listener may have been interrupted. This may cause issues in consequtive processes
+
+- Example solution to concurrency:
+  - Make sure that passed events saved by NATS stay saved
+  - Passed events are sent to the appropriate service even if the service was recently offline
+  - Example workflow:
+    - run `npm run publish` to start publishing events
+    - run `npm run listen` to print out received events
+    - shutdown listener and publish more events by saving `publish.ts`
+    - run `npm run listen` to start the listener service again and you should see all events that the listener has missed
+
+```ts
+const options = stan
+  .subscriptionOptions()
+  .setManualAckMode(true)
+  .setDeliverAllAvailable() // to get all events delivered from the past
+  .setDurableName("orders-service"); // to keep track all events to this specific queue-group, even if the service goes offline
+
+// in case of horizontal scaling, we sometimes do not want identical listeners receiving the event
+// this is where Queue-Groups come in (aka qGroup)
+const subscription = stan.subscribe(
+  "ticket:created",
+  "orders-service-queue-group", // So that NATS funnels events to a specific service
+  options
+);
+```
 
 </details>
 
