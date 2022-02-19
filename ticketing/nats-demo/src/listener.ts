@@ -18,13 +18,17 @@ stan.on("connect", () => {
     process.exit(); // Close client a bit more gracefully
   });
 
-  const options = stan.subscriptionOptions().setManualAckMode(true);
+  const options = stan
+    .subscriptionOptions()
+    .setManualAckMode(true)
+    .setDeliverAllAvailable() // to get all events delivered from the past
+    .setDurableName("orders-service"); // to keep track all events to this specific queue-group, even if the service goes offline
 
   // in case of horizontal scaling, we sometimes do not want identical listeners receiving the event
   // this is where Queue-Groups come in (aka qGroup)
   const subscription = stan.subscribe(
     "ticket:created",
-    "orders-service-queue-group",
+    "orders-service-queue-group", // So that NATS funnels events to a specific service
     options
   );
 

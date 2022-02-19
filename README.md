@@ -476,7 +476,33 @@ const subscription = stan.subscribe(
 - You should be able to access the monitoring service now on `localhost:8222/streaming`
 
 - **Concurrency Issues**: There is a grace period in which NATS will continue to send events to Listeners even though a Listener could have been interrupted or terminated, making the event be lost
+
   - This can be observed in the monitoring view `localhost:8222/streaming/channelz?subs=1` (if you are fast enough). There, more Listeners may be listed since NATS may not have noticed that a Listener may have been interrupted. This may cause issues in consequtive processes
+
+- Example solution to concurrency:
+  - Make sure that passed events saved by NATS stay saved
+  - Passed events are sent to the appropriate service even if the service was recently offline
+  - Example workflow:
+    - run `npm run publish` to start publishing events
+    - run `npm run listen` to print out received events
+    - shutdown listener and publish more events by saving `publish.ts`
+    - run `npm run listen` to start the listener service again and you should see all events that the listener has missed
+
+```ts
+const options = stan
+  .subscriptionOptions()
+  .setManualAckMode(true)
+  .setDeliverAllAvailable() // to get all events delivered from the past
+  .setDurableName("orders-service"); // to keep track all events to this specific queue-group, even if the service goes offline
+
+// in case of horizontal scaling, we sometimes do not want identical listeners receiving the event
+// this is where Queue-Groups come in (aka qGroup)
+const subscription = stan.subscribe(
+  "ticket:created",
+  "orders-service-queue-group", // So that NATS funnels events to a specific service
+  options
+);
+```
 
 </details>
 
